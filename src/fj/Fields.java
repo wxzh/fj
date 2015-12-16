@@ -31,16 +31,14 @@ class Field<Klass> {
  * ----------------------------------------
  *       fields(C) = [D g] ++ [C f]
  */
-public interface Fields<Term, Klass, Ctr, Method, Program>
-		extends FJAlgQuery<Term, Klass, Ctr, Method, Program, List<Field<Klass>>> {
+public interface Fields<Term, Klass, Ctr, Method, Prog>
+		extends FJAlgQuery<Term, Klass, Ctr, Method, Prog, List<Field<Klass>>> {
 	Map<String, Klass> classTable();
 
-	@Override
 	default Zero<List<Field<Klass>>> m() {
 		throw new OperationNotSupported();
 	}
 
-	@Override
 	default List<Field<Klass>> Class(String name, String parent, List<Tuple2<String, String>> fields, Ctr ctr,
 			List<Method> methods) {
 
@@ -48,7 +46,6 @@ public interface Fields<Term, Klass, Ctr, Method, Program>
 				visitKlass(classTable().get(parent)).stream()).collect(Collectors.toList());
 	}
 
-	@Override
 	default List<Field<Klass>> Object() {
 		return Collections.emptyList();
 	}

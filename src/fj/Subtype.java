@@ -36,12 +36,10 @@ public interface Subtype<Term, Klass, Ctr, Method, Prog> extends FJAlgQuery<Term
 	FJAlgMatcher<Term, Klass, Ctr, Method, Prog, Boolean> matcher();
 	Map<String, Klass> classTable();
 
-	@Override
 	default Zero<ISubtype<Klass>> m() {
 		throw new OperationNotSupported();
 	}
 
-	@Override
 	default ISubtype<Klass> Class(String self, String parent, List<Tuple2<String, String>> fields, Ctr ctr, List<Method> methods) {
 		return c -> matcher()
 				.Class(self2 -> parent2 -> fields2 -> ctr2 -> methods2 -> self.equals(self2) // S-Refl
@@ -52,7 +50,6 @@ public interface Subtype<Term, Klass, Ctr, Method, Prog> extends FJAlgQuery<Term
 				.visitKlass(c);
 	}
 
-	@Override
 	default ISubtype<Klass> Object() {
 		return c -> matcher()
 				.Object(() -> true)  // S-Refl

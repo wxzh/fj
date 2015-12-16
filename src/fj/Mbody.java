@@ -39,7 +39,7 @@ public interface Mbody<Term, Klass, Ctr, Method, Prog> extends FJAlgQuery<Term, 
 	Map<String, Klass> classTable();
 	FJAlgMatcher<Term, Klass, Ctr, Method, Prog, Boolean> mMatcher();
 	FJAlgMatcher<Term, Klass, Ctr, Method, Prog, MethodBody<Term>> mExtractor();
-	@Override
+
 	default IMbody<Term> Class(String self, String parent, List<Tuple2<String, String>> fields, Ctr ctr, List<Method> methods) {
 		return method -> methods.stream()
 				.filter(m -> mMatcher()

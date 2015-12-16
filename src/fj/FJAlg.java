@@ -2,10 +2,8 @@ package fj;
 
 import java.util.List;
 
-import annotation.Free;
 import library.Tuple2;
 
-@Free
 public interface FJAlg<Term, Klass, Ctr, Method, Prog> {
 	Prog Program(List<Klass> classes, Term t);
 
