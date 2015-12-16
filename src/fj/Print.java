@@ -13,38 +13,31 @@ interface IPrint {
 
 public interface Print<Term, Klass, Ctr, Method, Prog>
 		extends GFJAlg<Term, Klass, Ctr, Method, Prog, IPrint, IPrint, IPrint, IPrint, IPrint> {
-	@Override
 	default IPrint Program(List<Klass> classes, Term t) {
 		return tabs -> classes.stream().map(c -> visitKlass(c).print(tabs)).collect(Collectors.joining("\n")) + "\n"
 				+ visitTerm(t).print(tabs);
 	}
 
-	@Override
 	default IPrint Var(String x) {
 		return tabs -> tabs + x;
 	}
 
-	@Override
 	default IPrint FieldAccess(Term t, String f) {
 		return tabs -> tabs + visitTerm(t).print("") + "." + f;
 	}
 
-	@Override
 	default IPrint MethodCall(Term t, String name, List<Term> ts) {
 		return tabs -> tabs + visitTerm(t).print("") + "." + name + printTerms(ts);
 	}
 
-	@Override
 	default IPrint New(String ty, List<Term> ts) {
 		return tabs -> tabs + "new " + ty + printTerms(ts);
 	}
 
-	@Override
 	default IPrint Cast(String ty, Term t) {
 		return tabs -> tabs + "(" + ty + ") " + visitTerm(t).print("");
 	}
 
-	@Override
 	default IPrint Class(String name, String parent, List<Tuple2<String, String>> fields, Ctr ctr,
 			List<Method> methods) {
 		return tabs -> {
@@ -59,12 +52,10 @@ public interface Print<Term, Klass, Ctr, Method, Prog>
 		};
 	}
 
-	@Override
 	default IPrint Object() {
 		return tabs -> "class Object {\n" + "\tsuper();\n" + "}";
 	}
 
-	@Override
 	default IPrint Constructor(String name, List<Tuple2<String, String>> params, List<String> xs,
 			List<Tuple2<String, String>> assignments) {
 		return tabs -> {
@@ -76,7 +67,6 @@ public interface Print<Term, Klass, Ctr, Method, Prog>
 		};
 	}
 
-	@Override
 	default IPrint Method(String returnTy, String name, List<Tuple2<String, String>> params, Term body) {
 		return tabs -> String.join("\n", tabs + returnTy + " " + name + printParams(params) + " {", tabs + "\treturn " + visitTerm(body).print("") + ";",  tabs + "}");
 	}

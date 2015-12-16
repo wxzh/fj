@@ -1,5 +1,8 @@
 package fj;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 /**
  * Valid method overriding: override(m, D, [C] -> C0)
  * ==================================================
@@ -9,6 +12,15 @@ package fj;
  *            override(m, D, [C] -> C0)
  *
  */
-public interface Override {
+public interface Override<Term, Klass, Ctr, Method, Prog> {
+	Mtype<Term, Klass, Ctr, Method, Prog> mtype();
+	TyEqv<Term, Klass, Ctr, Method, Prog> tyEqv();
 
+	default boolean override(String m, Klass D, List<Klass> Cs, Klass C0) {
+		MethodType md = mtype().visitKlass(D).mtype(m);
+		List<String> Ds = md.tyParams;
+		String D0 = md.tyReturn;
+		return Cs.size() == Ds.size() && IntStream.range(0, Cs.size()).allMatch(i -> Cs.get(i).equals(Ds.get(i))) &&
+				C0.equals(D0);
+	}
 }

@@ -10,16 +10,6 @@ import fj.fjalg.shared.FJAlgQuery;
 import library.Tuple2;
 import library.Zero;
 
-class Field<Klass> {
-	Klass ty;
-	String name;
-
-	public Field(Klass ty, String name) {
-		this.ty = ty;
-		this.name = name;
-	}
-}
-
 /**
  * Fields lookup: fields(C) = [C f]
  * ================================
@@ -32,17 +22,16 @@ class Field<Klass> {
  *       fields(C) = [D g] ++ [C f]
  */
 public interface Fields<Term, Klass, Ctr, Method, Prog>
-		extends FJAlgQuery<Term, Klass, Ctr, Method, Prog, List<Field<Klass>>> {
+		extends FJAlgQuery<Term, Klass, Ctr, Method, Prog, List<Tuple2<String, String>>> {
 	Map<String, Klass> classTable();
-
-	default Zero<List<Field<Klass>>> m() {
+	default Zero<List<Tuple2<String, String>>> m() {
 		throw new OperationNotSupported();
 	}
 
-	default List<Field<Klass>> Class(String name, String parent, List<Tuple2<String, String>> fields, Ctr ctr,
+	default List<Tuple2<String, String>> Class(String name, String parent, List<Tuple2<String, String>> fields, Ctr ctr,
 			List<Method> methods) {
 
-		return Stream.concat(fields.stream().map(pr -> new Field<>(classTable().get(pr._1), pr._2)),
+		return Stream.concat(fields.stream(),
 				visitKlass(classTable().get(parent)).stream()).collect(Collectors.toList());
 	}
 

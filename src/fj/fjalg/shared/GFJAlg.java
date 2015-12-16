@@ -5,7 +5,7 @@ public interface GFJAlg<ITerm, IKlass, ICtr, IMethod, IProg, OTerm, OKlass, OCtr
 	OTerm New(java.lang.String p1, java.util.List<ITerm> p2);
 	OProg Program(java.util.List<IKlass> p1, ITerm p2);
 	OTerm Var(java.lang.String p1);
-	OCtr Constructor(java.lang.String p1, java.util.List<library.Tuple2<java.lang.String, java.lang.String>> p2, java.util.List<java.lang.String> p3, java.util.List<library.Tuple2<java.lang.String, java.lang.String>> p4);
+	OCtr Constructor(java.lang.String p1, java.util.List<library.Tuple2<java.lang.String, java.lang.String>> p2, java.util.List<java.lang.String> p3, java.util.List<java.lang.String> p4);
 	OKlass Class(java.lang.String p1, java.lang.String p2, java.util.List<library.Tuple2<java.lang.String, java.lang.String>> p3, ICtr p4, java.util.List<IMethod> p5);
 	OKlass Object();
 	OMethod Method(java.lang.String p1, java.lang.String p2, java.util.List<library.Tuple2<java.lang.String, java.lang.String>> p3, ITerm p4);

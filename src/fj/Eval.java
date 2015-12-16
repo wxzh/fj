@@ -48,25 +48,30 @@ public interface Eval<Term, Klass, Ctr, Method, Prog> extends FJAlgQuery<Term, K
 				: alg().Cast(D, visitTerm(t)); // E-Cast
 	}
 
-	/**
-	 * fields(C) = [C f] 
-	 * --------------------- (E-ProjNew) 
-	 * (new C([v])).fi -> vi
-	 */
 	default Term New(String c, List<Term> vs) {
 		fields().visitKlass(c);
 	}
 
-	default Term Var(String p1) {
-		// TODO Auto-generated method stub
-		return FJAlgQuery.super.Var(p1);
-	}
-
 	/**
-	 * t -> t' ----------- (E-Field) t.f -> t'.f
+	 * fields(C) = [C f] 
+	 * --------------------- (E-ProjNew) 
+	 * (new C([v])).fi -> vi
+	 * 
+	 * t -> t'
+	 * ----------- (E-Field) 
+	 * t.f -> t'.f
 	 */
 	default Term FieldAccess(Term t, String f) {
-		return alg().FieldAccess(visitTerm(t), f);
+		return isVal().visitTerm(t) 
+				? matcher()
+						.New(C -> vs -> {
+							List<Field> fields = fields().visitKlass(classTable().get(C));
+							for (i = 0; i < fields.size(); i++) {
+								if (fields.get(i).name.equals(f)) return vs.get(i);
+							};})
+						.otherwise(() -> m().empty())
+						.visitTerm(t)
+				: alg().FieldAccess(visitTerm(t), f);
 	}
 
 	/**
