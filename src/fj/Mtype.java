@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import fj.fjalg.external.FJAlgMatcher;
 import fj.fjalg.shared.FJAlgQuery;
 import library.Tuple2;
+import library.Zero;
 
 interface IMtype {
 	MethodType mtype(String m);
@@ -39,6 +40,10 @@ public interface Mtype<Term, Klass, Ctr, Method, Prog> extends FJAlgQuery<Term, 
 	FJAlgMatcher<Term, Klass, Ctr, Method, Prog, Boolean> mMatcher();
 	FJAlgMatcher<Term, Klass, Ctr, Method, Prog, MethodType> mExtractor();
 
+	default Zero<IMtype> m() {
+		throw new RuntimeException();
+	}
+
 	default IMtype Class(String self, String parent, List<Tuple2<String, String>> fields, Ctr ctr, List<Method> methods) {
 		return method -> methods.stream()
 				.filter(m -> mMatcher()
@@ -48,8 +53,12 @@ public interface Mtype<Term, Klass, Ctr, Method, Prog> extends FJAlgQuery<Term, 
 				.findFirst().map(m -> mExtractor()
 						.Method(c -> name -> params -> body -> new MethodType(c, params.
 								stream().map(pr -> pr._1).collect(Collectors.toList())))
-						.otherwise(() -> null)
+						.otherwise(() -> m().empty().mtype(method))
 						.visitMethod(m))
-				.orElse(visitKlass(classTable().get(parent)).mtype(method));
+				.orElseGet(() -> visitKlass(classTable().get(parent)).mtype(method));
+	}
+
+	default IMtype Object() {
+		return m -> null;
 	}
 }

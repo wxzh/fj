@@ -56,13 +56,13 @@ public interface Print<Term, Klass, Ctr, Method, Prog>
 		return tabs -> "class Object {\n" + "\tsuper();\n" + "}";
 	}
 
-	default IPrint Constructor(String name, List<Tuple2<String, String>> params, List<String> xs,
-			List<Tuple2<String, String>> assignments) {
+	default IPrint Constructor(String name, List<Tuple2<String, String>> params, List<String> gs,
+			List<String> fs) {
 		return tabs -> {
 			String newTabs = tabs + "\t";
 			return Stream.of(tabs + name + printParams(params) + " {",
-					newTabs + "super(" + String.join(", ", xs) + ");", assignments.stream()
-							.map(pr -> newTabs + "this." + pr._1 + " = " + pr._2 + ";").collect(Collectors.joining("\n")),
+					newTabs + "super(" + String.join(", ", gs) + ");", fs.stream()
+							.map(f -> newTabs + "this." + f + " = " + f + ";").collect(Collectors.joining("\n")),
 					tabs + "}").filter(s -> s.length() != 0).collect(Collectors.joining("\n"));
 		};
 	}

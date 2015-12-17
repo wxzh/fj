@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import fj.fjalg.external.FJAlgMatcher;
 import fj.fjalg.shared.FJAlgQuery;
 import library.Tuple2;
+import library.Zero;
 
 interface IMbody<Term> {
 	MethodBody<Term> mbody(String m);
@@ -40,6 +41,10 @@ public interface Mbody<Term, Klass, Ctr, Method, Prog> extends FJAlgQuery<Term, 
 	FJAlgMatcher<Term, Klass, Ctr, Method, Prog, Boolean> mMatcher();
 	FJAlgMatcher<Term, Klass, Ctr, Method, Prog, MethodBody<Term>> mExtractor();
 
+	default Zero<IMbody<Term>> m() {
+		throw new RuntimeException();
+	}
+
 	default IMbody<Term> Class(String self, String parent, List<Tuple2<String, String>> fields, Ctr ctr, List<Method> methods) {
 		return method -> methods.stream()
 				.filter(m -> mMatcher()
@@ -50,6 +55,6 @@ public interface Mbody<Term, Klass, Ctr, Method, Prog> extends FJAlgQuery<Term, 
 						.Method(tyReturn -> name -> params -> body -> new MethodBody<>(params.stream().map(pr -> pr._2).collect(Collectors.toList()), body))
 						.otherwise(() -> null)
 						.visitMethod(m))
-				.orElse(visitKlass(classTable().get(parent)).mbody(method));
+				.orElseGet(() -> visitKlass(classTable().get(parent)).mbody(method));
 	}
 }

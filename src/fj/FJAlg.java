@@ -2,8 +2,10 @@ package fj;
 
 import java.util.List;
 
+import annotation.Free;
 import library.Tuple2;
 
+@Free
 public interface FJAlg<Term, Klass, Ctr, Method, Prog> {
 	Prog Program(List<Klass> classes, Term t);
 
@@ -36,7 +38,7 @@ public interface FJAlg<Term, Klass, Ctr, Method, Prog> {
 	 *  class C extends C {[C f;] K [M]}
 	 */
 	Klass Class(String name, String parent, List<Tuple2<String, String>> fields, Ctr ctr, List<Method> methods);
-	
+
 	/**
 	 * Object
 	 */
@@ -45,7 +47,7 @@ public interface FJAlg<Term, Klass, Ctr, Method, Prog> {
 	/**
 	 *  C([C f]) {super([f]); [this.f = f;]}
 	 */
-	Ctr Constructor(String name, List<Tuple2<String, String>> params, List<String> xs, List<String> assignments);
+	Ctr Constructor(String name, List<Tuple2<String, String>> params, List<String> superFields, List<String> assignments);
 
 	/**
 	 *  C m([C x]) {return t;}

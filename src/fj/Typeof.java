@@ -19,15 +19,16 @@ interface TCheckMethod {
 	void tcheckMethod(String c);
 }
 
-interface TCheckCtr<Klass> {
-	void tcheckCtr(List<Field<Klass>> cfs, List<Field<Klass>> dgs);
+interface TCheckCtr {
+	void tcheckCtr(List<Tuple2<String, String>> dgs, List<Tuple2<String, String>> cfs);
 }
 
 class TypeError extends RuntimeException {
+	private static final long serialVersionUID = 1L;
 }
 
-public interface Typeof<Term, Klass, Ctr, Method, Prog> 
-	extends GFJAlg<Term, Klass, Ctr, Method, Prog, ITypeof, Void, TCheckCtr<Klass>, TCheckMethod, String> {
+public interface Typeof<Term, Klass, Ctr, Method, Prog>
+	extends GFJAlg<Term, Klass, Ctr, Method, Prog, ITypeof, Void, TCheckCtr, TCheckMethod, String> {
 	Fields<Term, Klass, Ctr, Method, Prog> fields();
 	Subtype<Term, Klass, Ctr, Method, Prog> subtype();
 	Override<Term, Klass, Ctr, Method, Prog> override();
@@ -42,10 +43,14 @@ public interface Typeof<Term, Klass, Ctr, Method, Prog>
 	 */
 	default ITypeof Var(String x) {
 		return Gamma -> {
-			if (Gamma.containsKey(x))  
+			if (Gamma.containsKey(x))
 				return Gamma.get(x);
 			throw new TypeError();
 		};
+	}
+
+	default Void Object() {
+		return null;
 	}
 
 	/**
@@ -57,14 +62,14 @@ public interface Typeof<Term, Klass, Ctr, Method, Prog>
 	default ITypeof New(String C0, List<Term> ts) {
 		return Gamma -> {
 			List<Tuple2<String, String>> fields = fields().visitKlass(classTable().get(C0));
-			if (ts.size() == fields.size() 
-					&& IntStream.range(0, ts.size()).allMatch(i -> { 
+			if (ts.size() == fields.size()
+					&& IntStream.range(0, ts.size()).allMatch(i -> {
 						Klass C = classTable().get(visitTerm(ts.get(i)).typeof(Gamma));
 						Klass D = classTable().get(fields.get(i)._1);
 						return subtype().visitKlass(C).subtype(D);
 					})) {
 					return C0;
-			} 
+			}
 			throw new TypeError();
 		};
 	}
@@ -74,14 +79,14 @@ public interface Typeof<Term, Klass, Ctr, Method, Prog>
 	 *    mtype(m, C0) = [D] -> C
 	 * Gamma |- [t] : [C]  [C] <: [D]
 	 * ------------------------------ (T-Invk)
-	 *   Gamma |- t.m([t]) : C 
+	 *   Gamma |- t.m([t]) : C
 	 */
 	default ITypeof MethodCall(Term t0, String m, List<Term> ts) {
 		return Gamma -> {
 			Klass C0 = classTable().get(visitTerm(t0).typeof(Gamma));
 			MethodType mtype = mtype().visitKlass(C0).mtype(m);
 			List<String> Ds = mtype.tyParams;
-			if (ts.size() == Ds.size() 
+			if (ts.size() == Ds.size()
 					&& IntStream.range(0, ts.size()).allMatch(i -> {
 						Klass C = classTable().get(visitTerm(ts.get(i)).typeof(Gamma));
 						Klass D = classTable().get(Ds.get(i));
@@ -107,16 +112,16 @@ public interface Typeof<Term, Klass, Ctr, Method, Prog>
 			throw new TypeError();
 		};
 	}
-	
+
 	/**
 	 * Gamma |- t0 : D  D <: C
 	 * ------------------------- (T-UCast)
 	 *   Gamma |- (C) t0 : C
-	 *   
-	 * Gamma |- t0 : D  C <: D  C /= D    
+	 *
+	 * Gamma |- t0 : D  C <: D  C /= D
 	 * ------------------------------- (T-DCast)
 	 *   Gamma |- (C) t0 : C
-	 *   
+	 *
 	 * Gamma |- t0 : D  C /<: D  D /<: C
 	 *         stupid warning
 	 * ------------------------------- (T-DCast)
@@ -148,7 +153,7 @@ public interface Typeof<Term, Klass, Ctr, Method, Prog>
 
 	/**
 	 * Method typing
-	 * 
+	 *
 	 * [x:C], this:C |- t0 : E0   E0 <: C0
 	 * CT(C) = class C extends D {...}
 	 *     override(m, D, [C] -> C0)
@@ -171,30 +176,29 @@ public interface Typeof<Term, Klass, Ctr, Method, Prog>
 			throw new TypeError();
 		};
 	}
-	
+
 	/**
 	 * Class typing
-	 * 
+	 *
 	 * K = C([D g] ++ [C f]) {super([g]); [this.f = f;]}
 	 * fields(D) = [D g]    [M] OK in C
 	 * -----------------------------------------------
 	 *    class C extends D {[C f;] K [M]}  OK
 	 */
-	default Void Class(String c, String d, List<Tuple2<String, String>> fs, Ctr K, List<Method> methods) {
+	default Void Class(String c, String d, List<Tuple2<String, String>> cfs, Ctr K, List<Method> methods) {
 		Klass D = classTable().get(d);
-		List<Field<Klass>> Dgs = fields().visitKlass(D);
-		visitCtr(K).tcheckCtr(fs, Dgs);;
+		visitCtr(K).tcheckCtr(fields().visitKlass(D), cfs);
 		methods.forEach(m -> visitMethod(m).tcheckMethod(c));
 		return null;
 	}
-	
-	
-	default TCheckCtr<Klass> Constructor(String c, List<Tuple2<String, String>> params, List<String> gs,
-			List<Tuple2<String, String>> fas) {
-		return (cfs, dgs) -> {
-			// assignments
-			cfs.size() == fas.size() &&  IntStream.range(0, fs.size()).all
-					stream().
+
+	default TCheckCtr Constructor(String c, List<Tuple2<String, String>> params, List<String> gs,
+			List<String> fs) {
+		//TODO
+		return (dgs, cfs) -> {
+			if (cfs.size() == fs.size()
+					&& IntStream.range(0, fs.size()).allMatch(i -> cfs.get(i)._2.equals(fs.get(i)))) // assignments are fields
+				return;
 			throw new TypeError();
 		};
 	}

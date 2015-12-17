@@ -12,10 +12,6 @@ interface ISubtype<Klass> {
 	boolean subtype(Klass klass);
 }
 
-class OperationNotSupported extends RuntimeException {
-	private static final long serialVersionUID = 1L;
-}
-
 /**
  * Subtyping: C <: D
  * =================
@@ -37,23 +33,24 @@ public interface Subtype<Term, Klass, Ctr, Method, Prog> extends FJAlgQuery<Term
 	Map<String, Klass> classTable();
 
 	default Zero<ISubtype<Klass>> m() {
-		throw new OperationNotSupported();
+		throw new RuntimeException();
 	}
 
 	default ISubtype<Klass> Class(String self, String parent, List<Tuple2<String, String>> fields, Ctr ctr, List<Method> methods) {
-		return c -> matcher()
-				.Class(self2 -> parent2 -> fields2 -> ctr2 -> methods2 -> self.equals(self2) // S-Refl
+		return C -> matcher()
+				.Class(self2 -> parent2 -> fields2 -> ctr2 -> methods2
+						-> self.equals(self2) // S-Refl
 						|| parent.equals(self2) // S-Subclass
 						|| visitKlass(classTable().get(parent)).subtype(classTable().get(self2))) // S-Trans
 				.Object(() -> true) // S-Top
-				.otherwise(() -> m().empty().subtype(c))
-				.visitKlass(c);
+				.otherwise(() -> m().empty().subtype(C))
+				.visitKlass(C);
 	}
 
 	default ISubtype<Klass> Object() {
-		return c -> matcher()
+		return C -> matcher()
 				.Object(() -> true)  // S-Refl
 				.otherwise(() -> false) // S-Top
-				.visitKlass(c);
+				.visitKlass(C);
 	}
 }

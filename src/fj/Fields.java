@@ -25,7 +25,7 @@ public interface Fields<Term, Klass, Ctr, Method, Prog>
 		extends FJAlgQuery<Term, Klass, Ctr, Method, Prog, List<Tuple2<String, String>>> {
 	Map<String, Klass> classTable();
 	default Zero<List<Tuple2<String, String>>> m() {
-		throw new OperationNotSupported();
+		throw new RuntimeException();
 	}
 
 	default List<Tuple2<String, String>> Class(String name, String parent, List<Tuple2<String, String>> fields, Ctr ctr,
@@ -35,7 +35,7 @@ public interface Fields<Term, Klass, Ctr, Method, Prog>
 				visitKlass(classTable().get(parent)).stream()).collect(Collectors.toList());
 	}
 
-	default List<Field<Klass>> Object() {
+	default List<Tuple2<String, String>> Object() {
 		return Collections.emptyList();
 	}
 }

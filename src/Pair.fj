@@ -1,13 +1,3 @@
-class A extends Object {
-	A() {
-		super();
-	}
-}
-class B extends Object {
-	B() {
-		super();
-	}
-}
 class Pair extends Object {
 	Object fst;
 	Object snd;
