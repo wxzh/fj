@@ -18,18 +18,14 @@ import java.util.Map;
 import org.junit.Test;
 
 import fj.fjalg.external.Ctr;
-import fj.fjalg.external.CtrVisitor;
 import fj.fjalg.external.FJAlgFactory;
 import fj.fjalg.external.FJAlgMatcher;
 import fj.fjalg.external.FJAlgMatcherImpl;
+import fj.fjalg.external.FJAlgVisitor;
 import fj.fjalg.external.Klass;
-import fj.fjalg.external.KlassVisitor;
 import fj.fjalg.external.Method;
-import fj.fjalg.external.MethodVisitor;
 import fj.fjalg.external.Prog;
-import fj.fjalg.external.ProgVisitor;
 import fj.fjalg.external.Term;
-import fj.fjalg.external.TermVisitor;
 import fj.fjalg.shared.GFJAlg;
 import library.Tuple2;
 
@@ -57,17 +53,11 @@ public class Tests {
 	}
 
 	class PrintImpl
-			implements Print<Term, Klass, Ctr, Method, Prog>, CtrVisitor<IPrint, IPrint, IPrint, IPrint, IPrint>,
-			TermVisitor<IPrint, IPrint, IPrint, IPrint, IPrint>, MethodVisitor<IPrint, IPrint, IPrint, IPrint, IPrint>,
-			ProgVisitor<IPrint, IPrint, IPrint, IPrint, IPrint>, KlassVisitor<IPrint, IPrint, IPrint, IPrint, IPrint> {
+			implements Print<Term, Klass, Ctr, Method, Prog>, FJAlgVisitor<IPrint, IPrint, IPrint, IPrint, IPrint> {
 	}
 
 	class SubtypeImpl implements Subtype<Term, Klass, Ctr, Method, Prog>,
-			TermVisitor<ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>>,
-			CtrVisitor<ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>>,
-			KlassVisitor<ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>>,
-			MethodVisitor<ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>>,
-			ProgVisitor<ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>> {
+			FJAlgVisitor<ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>, ISubtype<Klass>> {
 		public FJAlgMatcher<Term, Klass, Ctr, Method, Prog, Boolean> matcher() {
 			return new FJAlgMatcherImpl<>();
 		}
@@ -77,29 +67,19 @@ public class Tests {
 		}
 	}
 
-	class IsValImpl
-			implements IsVal<Term, Klass, Ctr, Method, Prog>, TermVisitor<Boolean, Boolean, Boolean, Boolean, Boolean>,
-			CtrVisitor<Boolean, Boolean, Boolean, Boolean, Boolean>,
-			KlassVisitor<Boolean, Boolean, Boolean, Boolean, Boolean>,
-			MethodVisitor<Boolean, Boolean, Boolean, Boolean, Boolean>,
-			ProgVisitor<Boolean, Boolean, Boolean, Boolean, Boolean> {
+	class IsValImpl implements IsVal<Term, Klass, Ctr, Method, Prog>,
+			FJAlgVisitor<Boolean, Boolean, Boolean, Boolean, Boolean> {
 	}
 
 	class FieldsImpl implements Fields<Term, Klass, Ctr, Method, Prog>,
-			TermVisitor<List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>>,
-			CtrVisitor<List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>>,
-			KlassVisitor<List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>>,
-			MethodVisitor<List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>>,
-			ProgVisitor<List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>> {
+			FJAlgVisitor<List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>, List<Tuple2<String, String>>> {
 		public Map<String, Klass> classTable() {
 			return CT;
 		}
 	}
 
 	class MtypeImpl
-			implements Mtype<Term, Klass, Ctr, Method, Prog>, TermVisitor<IMtype, IMtype, IMtype, IMtype, IMtype>,
-			CtrVisitor<IMtype, IMtype, IMtype, IMtype, IMtype>, KlassVisitor<IMtype, IMtype, IMtype, IMtype, IMtype>,
-			MethodVisitor<IMtype, IMtype, IMtype, IMtype, IMtype>, ProgVisitor<IMtype, IMtype, IMtype, IMtype, IMtype> {
+			implements Mtype<Term, Klass, Ctr, Method, Prog>, FJAlgVisitor<IMtype, IMtype, IMtype, IMtype, IMtype> {
 		public Map<String, Klass> classTable() {
 			return CT;
 		}
@@ -114,11 +94,8 @@ public class Tests {
 	}
 
 	class MbodyImpl implements Mbody<Term, Klass, Ctr, Method, Prog>,
-			TermVisitor<IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>>,
-			CtrVisitor<IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>>,
-			KlassVisitor<IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>>,
-			MethodVisitor<IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>>,
-			ProgVisitor<IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>> {
+			FJAlgVisitor<IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>, IMbody<Term>> {
+
 		public Map<String, Klass> classTable() {
 			return CT;
 		}
@@ -139,11 +116,7 @@ public class Tests {
 	}
 
 	class TypeofImpl implements Typeof<Term, Klass, Ctr, Method, Prog>,
-			TermVisitor<ITypeof, Void, TCheckCtr, TCheckMethod, String>,
-			CtrVisitor<ITypeof, Void, TCheckCtr, TCheckMethod, String>,
-			KlassVisitor<ITypeof, Void, TCheckCtr, TCheckMethod, String>,
-			MethodVisitor<ITypeof, Void, TCheckCtr, TCheckMethod, String>,
-			ProgVisitor<ITypeof, Void, TCheckCtr, TCheckMethod, String> {
+			FJAlgVisitor<ITypeof, Void, TCheckCtr, TCheckMethod, String> {
 		public Fields<Term, Klass, Ctr, Method, Prog> fields() {
 			return fields;
 		}
@@ -170,19 +143,13 @@ public class Tests {
 	}
 
 	class SubstImpl implements Subst<Term, Klass, Ctr, Method, Prog>,
-			TermVisitor<ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>>,
-			CtrVisitor<ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>>,
-			KlassVisitor<ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>>,
-			MethodVisitor<ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>>,
-			ProgVisitor<ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>> {
+			FJAlgVisitor<ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>, ISubst<Term>> {
 		public GFJAlg<Term, Klass, Ctr, Method, Prog, Term, Klass, Ctr, Method, Prog> alg() {
 			return alg;
 		}
 	}
 
-	class Eval1Impl implements Eval1<Term, Klass, Ctr, Method, Prog>, TermVisitor<Term, Term, Term, Term, Term>,
-			CtrVisitor<Term, Term, Term, Term, Term>, KlassVisitor<Term, Term, Term, Term, Term>,
-			MethodVisitor<Term, Term, Term, Term, Term>, ProgVisitor<Term, Term, Term, Term, Term> {
+	class Eval1Impl implements Eval1<Term, Klass, Ctr, Method, Prog>, FJAlgVisitor<Term, Term, Term, Term, Term> {
 		public GFJAlg<Term, Klass, Ctr, Method, Prog, Term, Klass, Ctr, Method, Prog> alg() {
 			return alg;
 		}
@@ -266,14 +233,14 @@ public class Tests {
 	}
 
 	@Test
-	public void testMbody(){
+	public void testMbody() {
 		MethodBody<Term> mb = Pair.accept(mbody).mbody("setfst");
 		assertEquals("[newfst]", mb.params.toString());
 		assertEquals(body.accept(print).print(""), mb.body.accept(print).print(""));
 	}
 
 	@Test
-	public void testMtype(){
+	public void testMtype() {
 		MethodType mt = Pair.accept(mtype).mtype("setfst");
 		assertEquals("Pair", mt.tyReturn);
 		assertEquals("[Object]", mt.tyParams.toString());
@@ -317,7 +284,8 @@ public class Tests {
 		assertEquals("Object", alg.Cast("Object", newA).accept(typeof).typeof(emptyMap()));
 		// downcast
 		assertEquals("C", alg.Cast("C", newA).accept(typeof).typeof(emptyMap()));
-		assertEquals("B", alg.Cast("B", newA).accept(typeof).typeof(emptyMap())); // stupid warning
+		assertEquals("B", alg.Cast("B", newA).accept(typeof).typeof(emptyMap())); // stupid
+																					// warning
 		assertEquals("Object", alg.FieldAccess(newPair, "fst").accept(typeof).typeof(emptyMap()));
 		assertEquals("A", alg.Var("x").accept(typeof).typeof(Collections.singletonMap("x", "A")));
 		assertEquals("Pair", callSetfst.accept(typeof).typeof(emptyMap()));
